@@ -8,10 +8,12 @@ set(CMAKE_TOOLCHANE_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 include_directories(include)
 
-add_executable(animation_project include/gold.h src/main.cpp src/gold.cpp)
-
 set(ASSETS_FOLDER ${CMAKE_SOURCE_DIR}/assets)
 set(ASSETS_OUTPUT_DIR Release/assets)
+
+find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
+add_executable(animation_project include/gold.h src/main.cpp src/gold.cpp)
+target_link_libraries(animation_project sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
 
 add_custom_command(
     TARGET animation_project POST_BUILD
@@ -21,5 +23,6 @@ add_custom_command(
 )
 set_target_properties(animation_project PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
-target_link_libraries(animation_project sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+if (WIN32)
+    set_target_properties(animation_project PROPERTIES WIN32_EXECUTABLE YES LINK_FLAGS "/ENTRY:mainCRTStartup")
+endif()
