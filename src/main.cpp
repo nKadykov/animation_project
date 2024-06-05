@@ -9,16 +9,34 @@ int main() {
     window.setFramerateLimit(60);
 
     sf::Texture background_texture;
-    background_texture.loadFromFile("assets/back.jpg");
+    if(!background_texture.loadFromFile("assets/back.jpg")) {
+        exit(1);
+    }
     sf::Sprite background_sprite(background_texture);
 
     sf::Texture man_texture;
-    man_texture.loadFromFile("assets/man.png");
+    if(!man_texture.loadFromFile("assets/man.png")) {
+        exit(1);
+    }
     sf::Sprite man_sprite(man_texture);
 
     sf::Texture gold_texture;
-    gold_texture.loadFromFile("assets/gold.png");
+    if(!gold_texture.loadFromFile("assets/gold.png")) {
+        exit(1);
+    }
     sf::Sprite gold_sprite(gold_texture);
+
+    sf::Font font;
+    if(!font.loadFromFile("assets/ImpactRegular.ttf")) {
+        exit(1);
+    }
+    sf::Text score_text;
+    score_text.setFont(font);
+    score_text.setPosition(100, 10);
+    score_text.setOutlineColor(sf::Color::Black);
+    score_text.setOutlineThickness(4);
+    score_text.setCharacterSize(40);
+    int score = 0;
 
     std::list<Gold> gold_list;
 
@@ -100,6 +118,7 @@ int main() {
         while(gold_list_iterator != gold_list.end()) {
             if(man_sprite.getGlobalBounds().intersects(gold_list_iterator->getBounds())) {
                 gold_list_iterator = gold_list.erase(gold_list_iterator);
+                score++;
                 continue;
             }
             gold_list_iterator++;
@@ -110,12 +129,15 @@ int main() {
 
         window.clear();
 
+        score_text.setString("Gold: " + std::to_string(score));
+
         window.draw(background_sprite);
         while(gold_list_iterator != gold_list.end()) {
             gold_list_iterator->draw(window);
             gold_list_iterator++;
         }
         window.draw(man_sprite);
+        window.draw(score_text);
         window.display();
     }
 }
